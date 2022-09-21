@@ -1,4 +1,5 @@
 const session = require('express-session');
+const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -14,12 +15,13 @@ const { Server: IOServer } = require("socket.io");
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);
 
-app.use(cookieParser());
 
 const advancedOptions = { 
   useNewUrlParser: true,
   useUnifiedTopology: true 
 };
+
+app.use(cookieParser());
 
 app.use(session({
   store: new MongoStore({ 
@@ -32,6 +34,10 @@ app.use(session({
   cookie: { maxAge: 60000 },
   rolling: true
 }));
+
+//middlewares para autenticación
+app.use(passport.initialize());
+app.use(passport.session());
 
 const router = require("./routes");
 

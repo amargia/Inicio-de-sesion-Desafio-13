@@ -1,15 +1,12 @@
 const { Router } = require("express");
 const home = Router();
+const auth = require("../middlewares/auth.js");
+const User = require("../models/User.js");
 
-const Contenedor = require("../controller/productsController")
-
-home.get("/", (req, res) => {
-  const user = req.session.user;
-  if (user) {
-    res.render("home", { user: user });
-  } else {
-    res.render("login");
-  }
+home.get("/", auth, async (req, res) => {
+  const userData = await User.findById(req.user._id);
+  const user = userData.username;
+  res.render("home", { user: user });
 });
 
 module.exports = home;
